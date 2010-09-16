@@ -67,8 +67,7 @@ class CollabEditor extends CometActor with CometListener {
     case ReRender(thisActor) =>
       assert(thisActor == this)
       println("Got rerender message")
-      //reRender(false)
-      partialUpdate(Alert("RERENDER YOURSELF"))
+      reRender(false)
     case FileModified(thisProj: Project, modifiedFile: File) =>
       assert(thisProj == project)
       workingCopy.syncWithProject(modifiedFile)
