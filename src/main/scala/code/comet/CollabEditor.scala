@@ -78,9 +78,9 @@ class CollabEditor extends CometActor with CometListener {
   def compile(): JsCmd = {
     workingCopy.compile() match {
       case Nil =>
-        SetHtml("console", JsRaw("Successful complation"))
+        SetHtml("console", Str("Successful compilation"))
       case xs =>
-        SetHtml("console", JsRaw("<p>Compilation failure:<br/>" + xs.mkString("<br/>") + "</p>"))
+        SetHtml("console", <p>Compilation Failure: <br/> {xs.map(v => Str(v) ++ <br/>)} </p>)
     }
   }
 
