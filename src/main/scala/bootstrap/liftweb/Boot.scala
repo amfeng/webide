@@ -42,6 +42,7 @@ class Boot {
     // Build SiteMap
     val entries = List(
       Menu.i("Home") / "index", // the simple way to declare a menu
+      Menu.i("Project") / "project",
 
       // more complex because this menu allows anything in the
       // /static path to be visible
@@ -67,6 +68,11 @@ class Boot {
 
     // What is the function to test if a user is logged in?
     LiftRules.loggedInTest = Full(() => User.loggedIn_?)
+
+    //LiftRules.rewrite.append {
+    //  case RewriteRequest(ParsePath(List("project", name), _, _, _), _, _) => 
+    //    RewriteResponse("project" :: "editor" :: Nil, Map("name" -> name))
+    //}
 
     // Make a transaction span the whole HTTP request
     S.addAround(DB.buildLoanWrapper)

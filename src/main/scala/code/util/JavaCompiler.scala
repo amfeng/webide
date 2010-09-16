@@ -5,6 +5,8 @@ import JavaFileObject._
 import java.net.URI
 import java.io._
 
+import scala.collection.JavaConversions._
+
 class StringJavaFileObject(name: String, code: String) 
   extends SimpleJavaFileObject(URI.create("string:///" + name.replace('.', '/') + Kind.SOURCE.extension), Kind.SOURCE) {
   override def getCharContent(ignoreEncodingErrors: Boolean) = code
@@ -13,6 +15,22 @@ class StringJavaFileObject(name: String, code: String)
 object JavacUtil {
   val javac = ToolProvider.getSystemJavaCompiler
   assert(javac ne null)
+
+  def getJavaFileObjects(files: Seq[File]): Seq[JavaFileObject] = {
+    val errorCollector = new DiagnosticCollector[JavaFileObject]
+    val fileManager = javac.getStandardFileManager(errorCollector, null, null)
+    fileManager.getJavaFileObjectsFromFiles(files).asInstanceOf[java.lang.Iterable[JavaFileObject]].toSeq
+  }
+
+  def compile(sourceFiles: Seq[JavaFileObject],
+              buildDir: File): Seq[Diagnostic[JavaFileObject]] = {
+    println("compile(): sourceFiles = %s, buildDir = %s".format(sourceFiles, buildDir))
+    val errorCollector = new DiagnosticCollector[JavaFileObject]
+    val fileManager = javac.getStandardFileManager(errorCollector, null, null)
+    val javacOpts = Seq("-d", buildDir.getAbsolutePath)
+    javac.getTask(null, fileManager, errorCollector, javacOpts, null, sourceFiles).call()
+    errorCollector.getDiagnostics.asInstanceOf[java.lang.Iterable[Diagnostic[JavaFileObject]]].toSeq
+  }
 
   def compile(source: String): Option[List[String]] = {
     val errorCollector = new DiagnosticCollector[JavaFileObject]
@@ -36,10 +54,8 @@ object JavacUtil {
         Some(buf.toList)
   }
 
-  def run(mainClass: String): String = {
-    val runtime = Runtime.getRuntime 
-    val process = runtime.exec("java %s".format(mainClass))
-    println("new process created")
+  def run(classpath: File, mainClass: String): String = {
+    val process = Runtime.getRuntime.exec("java -cp %s %s".format(classpath.getAbsolutePath, mainClass))
     val inputStream = new BufferedInputStream(process.getInputStream)
     var cur = inputStream.read()
     val baos = new ByteArrayOutputStream(1024)
@@ -50,7 +66,6 @@ object JavacUtil {
     inputStream.close()
     new String(baos.toByteArray)
   }
-
 
   val defaultCode = """
   |public class Foo {
