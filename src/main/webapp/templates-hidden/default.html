@@ -4,7 +4,7 @@
     <meta name="description" content="" />
     <meta name="keywords" content="" />
     
-		<title>code:app:0.1-SNAPSHOT</title>
+		<title>webIDE - Amber Feng, Allen Chen, Stephen Tu</title>
     <lift:CSS.blueprint />
     <lift:CSS.fancyType />
     <!--<script id="jquery" src="/classpath/jquery.js" type="text/javascript"/>-->
@@ -19,13 +19,15 @@
 		editAreaLoader.init({
 			id: "editorpane"	// id of the textarea to transform		
 			,start_highlight: true	// if start with highlight
-			,allow_resize: "both"
+			,allow_resize: "false"
 			,allow_toggle: true
 			,word_wrap: true
 			,language: "en"
 			,syntax: "java"	
       ,min_width: 640
       ,min_height: 480
+			,allow_toggle: false
+			,font_family: "Monaco"
 		});
 	</script>
     
@@ -33,12 +35,8 @@
   <body>
     <div class="container">
 
-      <div class="column span-17 last">
-        <lift:bind name="content" />
-      </div>
-
-      
-      
+       <lift:bind name="content" />
+     
     </div>
   </body>
 </html>

@@ -34,7 +34,7 @@ function EditAreaLoader(){
 		debug: false
 		,smooth_selection: true
 		,font_size: "10"		// not for IE
-		,font_family: "monospace"	// can be "verdana,monospace". Allow non monospace font but Firefox get smaller tabulation with non monospace fonts. IE doesn't change the tabulation width and Opera doesn't take this option into account... 
+		,font_family: "Monaco,monospace"	// can be "verdana,monospace". Allow non monospace font but Firefox get smaller tabulation with non monospace fonts. IE doesn't change the tabulation width and Opera doesn't take this option into account... 
 		,start_highlight: false	// if start with highlight
 		,toolbar: "search, go_to_line, fullscreen, |, undo, redo, |, select_font,|, change_smooth_selection, highlight, reset_highlight, word_wrap, |, help"
 		,begin_toolbar: ""		//  "new_document, save, load, |"

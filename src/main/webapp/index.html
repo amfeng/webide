@@ -1,6 +1,6 @@
 <lift:surround with="default" at="content">
-  <h2>Welcome to your project!</h2>
-  <p>
+  <div id='logo'><img src='images/webide.png' /></div>
+  
 
     <script type="text/javascript">
       function publishCode() {
@@ -34,13 +34,20 @@
       });
     </script>
     <lift:comet type="CollabEditor">
-      <e:theID/>
-      <e:textbox/>
-      <button id="compile">Compile</button>
-      <e:run/> 
-      <div id="console"/>
-      <e:stdin/>
+			<e:theID/>
+			<div id='editor-container'>
+      	<e:textbox/>
+			</div>
+	  	<div id='right'>
+				<div id='console-container'>
+					<button id="compile">Compile</button>
+		      <e:run/> 
+		      <div id="console"/>
+		      <e:stdin/>
+				</div>
+	  </div>
+      
     </lift:comet>
-  </p>
-
+  
+  
 </lift:surround>

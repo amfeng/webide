@@ -2,11 +2,74 @@
 	display:none;
 }
 
+.container{
+  margin-left: 100px;
+  width: inherit;
+}
+
 #line_number{
   background: #eee;
   border-right: none;
 }
 
+#editor{
+  border-color: #666;
+}
+
+#result{
+  border: 0px;
+}
+
 #__ID__{
   display:none;
 }
+
+#editor-container{
+  float: left;
+  width: 700px;
+}
+
+#right{
+  float: left;
+}
+
+#console{
+  font: 1em/1.5 'andale mono','lucida console',monospace;
+  background: #444;
+  color: white;
+  padding: 10px;
+  width: 300px;
+  min-height: 5em;
+}
+
+#console pre{
+  margin: 0px;
+  white-space: none;
+}
+
+#stdin{
+  width: 320px;
+  background: #444;
+  border: 0px;
+  color: white;
+  font: 1em/1.5 'andale mono','lucida console',monospace;
+}
+
+#stdin:before{
+  content: "> ";
+}
+
+.line-error{
+  padding-right: 2px;
+  margin-bottom: -2px;
+}
+
+body, html, table, form, textarea{
+	font: 12px Monaco, sans-serif;
+}
+
+.editarea_popup, .editarea_popup table{
+	font-family: Monaco;
+	font-size: 10pt;
+}
+
