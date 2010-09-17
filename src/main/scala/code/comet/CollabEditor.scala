@@ -37,6 +37,8 @@ object CollabEditor extends LiftActor with ListenerManager {
 class CollabEditor extends CometActor with CometListener {
   def registerWith = CollabEditor
 
+  val buildDir = FileUtils.newTempDir
+
   //override def shouldUpdate: PartialFunction[Any, Boolean] = {
   //  case CodeUpdate(otherId, _) if otherId != uniqueId => true
   //  case _ => false
@@ -46,26 +48,27 @@ class CollabEditor extends CometActor with CometListener {
     case CodeUpdate(thisId, newCode) =>
       //reRender(false)
       println("calling editAreaLoader.setValue, from: " + thisId)
-      partialUpdate(Call("editAreaLoader.setValue", Str("editorpane"), Str(newCode)))
+      partialUpdate(Seq[JsCmd](
+        Call("editAreaLoader.setValue", Str("editorpane"), Str(newCode)),
+        compile(newCode)))
   }
 
   def compile(newCode: String): JsCmd = {
-    CollabEditor ! CodeUpdate(uniqueId, newCode)
-    JavacUtil.compile(newCode) match {
+    JavacUtil.compile(buildDir, newCode) match {
       case None =>
-        SetHtml("console", Text("SUCCESS"))
+        SetHtml("console", Text("Successful compliation"))
       case Some(errors) =>
-        SetHtml("console", Text("Compilation failure:<br/>" + errors.mkString("<br/>")))
+        Seq[JsCmd](
+          SetHtml("console", Text("Compilation failure") ++ <br/> ++ errors.map(err => Text(err.error))),
+          Call("clearLines")) ++
+        errors.map(err => Call("highlightLine", Str(err.lineNum.toString), Str(err.error)).cmd).toSeq
     }
   }
 
   def render = {
-    val code = CollabEditor !? GetCode match {
-      case CodeResp(c) => c
-    }
+    val code = CollabEditor !? GetCode match { case CodeResp(c) => c }
     bind("e",
       "theID" -> <div id="__ID__">{uniqueId}</div>,
-      "textbox" -> SHtml.textarea(code, (c: String) => {}, "id" -> "editorpane"),
-      "compile" -> SHtml.ajaxButton("compile", () => compile(code)))
+      "textbox" -> SHtml.textarea(code, (c: String) => {}, "id" -> "editorpane"))
   } 
 }

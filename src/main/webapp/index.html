@@ -1,55 +1,44 @@
 <lift:surround with="default" at="content">
   <h2>Welcome to your project!</h2>
   <p>
-    <!--
-    <lift:editor.editor>
-      <e:textbox/>
-      <e:compile/>
-      <div id="console"/>
-    </lift:editor.editor>
-    -->
 
     <script type="text/javascript">
+      function publishCode() {
+        var id   = $("#__ID__").text();
+        var code = editAreaLoader.getValue("editorpane");
+        //console.log("ID = " + id  + ", CODE = " + code);
+        $.post("/publish", { "id" : id, "code" : code });
+      }
+
       var shouldPush = false;
       setInterval(function() {
         if (shouldPush) {
-          var id   = $("#__ID__").text();
-          var code = editAreaLoader.getValue("editorpane");
-          //console.log("ID = " + id  + ", CODE = " + code);
-          $.post("/publish", { "id" : id, "code" : code });
+          publishCode();
           shouldPush = false;
         }
       }, 5000);
-      //$(document).ready(function() {
-      //  $("textarea").keypress(function() {
-      //    console.log("KEY PRESSED");
-      //    shoudldPush = true;
-      //  });
-      //});
-
-      function foo() {
-        $(window.frames["frame_editorpane"].document).ready(function() {
-          $(window.frames["frame_editorpane"].document.getElementById("textarea")).keypress(function() {
-            console.log("KEY PRESSED");
-            shouldPush = true;
-          });
-        })
-      }
 
       $(document).ready(function() {
-        setTimeout("foo()",  3000);
+        withEditorPaneWindow(function(win) {
+          $(win.document).ready(function() {
+            $(win.document.getElementById("textarea")).keypress(function() {
+              //console.log("KEY PRESSED");
+              shouldPush = true;
+            });
+          });
+        });
+      });
+
+      $(document).ready(function() {
+        $("#compile").click(function() { publishCode(); });
       });
     </script>
     <lift:comet type="CollabEditor">
       <e:theID/>
       <e:textbox/>
-      <e:compile/>
     </lift:comet>
+    <button id="compile">Compile</button>
     <div id="console"/>
   </p>
 
-
-
-
 </lift:surround>
-
