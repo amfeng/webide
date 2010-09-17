@@ -102,12 +102,14 @@ class CollabEditor extends CometActor with CometListener {
       case CompileResult(true, diags) =>
         Seq[JsCmd](
           SetHtml("console", Text("Successful compliation with warnings") ++ <br/> ++ 
-            diags.map(diag => <div title={diag.lineNum}>{diag.message}</div>)),
+            diags.map(diag => 
+              <div onclick="jumpToMethod(this)" title={diag.lineNum}>{diag.message}</div>)),
           Call("clearLines")) ++ renderDiags(diags)
       case CompileResult(false, diags) =>
         Seq[JsCmd](
           SetHtml("console", Text("Compilation failure") ++ <br/> ++ 
-            diags.map(diag => <div title={diag.lineNum}>{diag.message}</div>)),
+            diags.map(diag => 
+              <div onclick="jumpToMethod(this)" title={diag.lineNum}>{diag.message}</div>)),
           Call("clearLines")) ++ renderDiags(diags)
     }
   }
