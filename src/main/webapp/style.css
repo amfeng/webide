@@ -79,3 +79,12 @@ body, html, table, form, textarea{
 	font-size: 10pt;
 }
 
+#method-list{
+  width: 320px;
+  background: gray;
+}
+
+#method-list li{
+  
+}
+

@@ -1,6 +1,7 @@
 $(document).ready(function() {
    bindCSS();
    //$('#stdin').attr('placeholder', '> ');
+   buildMethodView([['public static void main', 2]]);
 });
 
 var F_EDITOR_PANE = "frame_editorpane";
@@ -76,4 +77,22 @@ function getElementsByClass(searchClass,node,tag) {
 		}
 	}
 	return classElements;
+}
+
+function buildMethodView(list){
+  ul_container = $('#method-list ul')
+  for(i = 0; i < list.length; i++){
+    method_name = list[i][0];
+    method_line = list[i][1];
+    list_element = $("<li>" + method_name +"</li>").attr("title", method_line)
+    ul_container.append(list_element);
+    list_element.click(function(){
+      jumpToMethod(this);
+    });
+  }
+}
+
+function jumpToMethod(ele){
+  editAreaLoader.execCommand('editorpane', 'go_to_line', ele.title);
+  return false;
 }

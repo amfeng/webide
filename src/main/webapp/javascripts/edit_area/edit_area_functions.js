@@ -256,7 +256,7 @@
 			if(icon != null)
 				this.switchClassSticky(icon, 'editAreaButtonNormal', false);
 		}
-		if(line && line!=null && line.search(/^[0-9]+$/)!=-1){
+		if(line && line!=null /*&& line.search(/^[0-9]+$/)!=-1*/){
 			var start=0;
 			var lines= this.textarea.value.split("\n");
 			if(line > lines.length)
