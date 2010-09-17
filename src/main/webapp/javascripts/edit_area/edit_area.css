@@ -1,3 +1,6 @@
+.hello{
+  
+}
 body, html{
 	margin: 0; 
 	padding: 0;
@@ -260,7 +263,7 @@ div#area_search_replace  #area_search_msg{
 	/*height: 21px; */
 	margin: 0; 
 	padding: 0;
-	background-color: #ECE9D8;
+	background-color: #cccccc;
 	text-align: center;
 }
 

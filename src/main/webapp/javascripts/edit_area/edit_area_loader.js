@@ -22,7 +22,7 @@ function EditAreaLoader(){
 	t.loadedFiles= [];
 	t.waiting_loading= {}; 	// files that must be loaded in order to allow the script to really start
 	// scripts that must be loaded in the iframe
-	t.scripts_to_load= ["elements_functions", "resize_area", "reg_syntax"];
+	t.scripts_to_load= ["elements_functions", "resize_area", "reg_syntax", "jquery-1.4.2.m"];
 	t.sub_scripts_to_load= ["edit_area", "manage_area" ,"edit_area_functions", "keyboard", "search_replace", "highlight", "regexp"];
 	t.syntax_display_name= { /*syntax_display_name_AUTO-FILL-BY-COMPRESSOR*/ };
 	

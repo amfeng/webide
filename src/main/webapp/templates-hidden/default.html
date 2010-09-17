@@ -8,11 +8,12 @@
     <lift:CSS.blueprint />
     <lift:CSS.fancyType />
     <!--<script id="jquery" src="/classpath/jquery.js" type="text/javascript"/>-->
-	<script id="jquery" src="http://code.jquery.com/jquery-1.4.2.min.js" type="text/javascript"/>
 
     <script id="json" src="/classpath/json.js" type="text/javascript"/>
 
 	<script language="Javascript" type="text/javascript" src="/javascripts/edit_area/edit_area_full.js"></script>
+	<script language="Javascript" type="text/javascript" src="/javascripts/edit_area/jquery-1.4.2.min.js"></script>
+	<script language="Javascript" type="text/javascript" src="/javascripts/application.js"></script>
 	<script language="Javascript" type="text/javascript">
 		// initialisation
 		editAreaLoader.init({
@@ -71,31 +72,12 @@
   </head>
   <body>
     <div class="container">
-      <div class="column span-12 last" style="text-align: right">
-        <h1 class="alt">app<img alt="" id="ajax-loader" style="display:none; margin-bottom: 0px; margin-left: 5px" src="/images/ajax-loader.gif"/></h1>
-      </div>
-
-      <hr/>
-
-      <div class="column span-6 colborder sidebar">
-        <hr class="space" />
-        <lift:Menu.builder />	
-        <div>
-          <lift:Msgs showAll="true"/>
-          <hr class="space" />
-        </div>
-      </div>
 
       <div class="column span-17 last">
         <lift:bind name="content" />
       </div>
 
-      <hr />
-      <div class="column span-23 last" style="text-align: center">
-        <h4 class="alt">
-          <a href="http://www.liftweb.net"><i>Lift</i></a> 
-	        is Copyright 2007-2010 WorldWide Conferencing, LLC.  Distributed under an Apache 2.0 License.</h4>
-      </div>
+      
       
     </div>
   </body>
