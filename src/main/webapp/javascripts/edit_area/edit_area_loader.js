@@ -42,8 +42,8 @@ function EditAreaLoader(){
 		,is_multi_files: false		// enable the multi file mode (the textarea content is ignored)
 		,allow_resize: "both"	// possible values: "no", "both", "x", "y"
 		,show_line_colors: false	// if the highlight is disabled for the line currently beeing edited (if enabled => heavy CPU use)
-		,min_width: 400
-		,min_height: 125
+		,min_width: 600
+		,min_height: 300
 		,replace_tab_by_spaces: false
 		,allow_toggle: true		// true or false
 		,language: "en"
@@ -362,7 +362,7 @@ EditAreaLoader.prototype ={
 		if(!t.iframe_script){
 			t.iframe_script="";
 			for(i=0; i<t.sub_scripts_to_load.length; i++)
-				t.iframe_script+='<script language="javascript" type="text/javascript" src="'+ t.baseURL + t.sub_scripts_to_load[i] +'.js"></script>';
+				//t.iframe_script+='<script language="javascript" type="text/javascript" src="'+ t.baseURL + t.sub_scripts_to_load[i] +'.js"></script>';
 		}
 		
 		// add plugins scripts if not already loaded by the compressor (but need to load language in all the case)
@@ -376,7 +376,7 @@ EditAreaLoader.prototype ={
 		
 		// create css link for the iframe if the whole css text has not been already loaded by the compressor
 		if(!t.iframe_css){
-			t.iframe_css="<link href='"+ t.baseURL +"edit_area.css' rel='stylesheet' type='text/css' />";
+			//t.iframe_css="<link href='"+ t.baseURL +"edit_area.css' rel='stylesheet' type='text/css' />";
 		}
 		
 		
