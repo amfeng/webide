@@ -8,7 +8,40 @@
       <div id="console"/>
     </lift:editor.editor>
     -->
+
+    <script type="text/javascript">
+      var shouldPush = false;
+      setInterval(function() {
+        if (shouldPush) {
+          var id   = $("#__ID__").text();
+          var code = editAreaLoader.getValue("editorpane");
+          //console.log("ID = " + id  + ", CODE = " + code);
+          $.post("/publish", { "id" : id, "code" : code });
+          shouldPush = false;
+        }
+      }, 5000);
+      //$(document).ready(function() {
+      //  $("textarea").keypress(function() {
+      //    console.log("KEY PRESSED");
+      //    shoudldPush = true;
+      //  });
+      //});
+
+      function foo() {
+        $(window.frames["frame_editorpane"].document).ready(function() {
+          $(window.frames["frame_editorpane"].document.getElementById("textarea")).keypress(function() {
+            console.log("KEY PRESSED");
+            shouldPush = true;
+          });
+        })
+      }
+
+      $(document).ready(function() {
+        setTimeout("foo()",  3000);
+      });
+    </script>
     <lift:comet type="CollabEditor">
+      <e:theID/>
       <e:textbox/>
       <e:compile/>
     </lift:comet>
