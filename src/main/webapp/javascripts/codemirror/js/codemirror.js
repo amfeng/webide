@@ -43,7 +43,7 @@ var CodeMirror = (function(){
     disableSpellcheck: true,
     textWrapping: true,
     readOnly: false,
-    width: "",
+    width: "300px",
     height: "300px",
     minHeight: 100,
     autoMatchParens: false,
