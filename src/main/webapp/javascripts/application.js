@@ -50,9 +50,14 @@ function clearLines() {
 }
 
 function highlightLine(line, error){
-  console.log(error)
   withEditorPaneWindow(function (win) {
     win.children[0].children["line_" + line].innerHTML = "<img class='line-error' src='images/cancel.png' title='" + error + "' />" + line;
+  });
+}
+
+function highlightWarningLine(line, error){
+  withEditorPaneWindow(function (win) {
+    win.children[0].children["line_" + line].innerHTML = "<img class='line-error' src='images/exclamation.png' title='" + error + "' />" + line;
   });
 }
 
