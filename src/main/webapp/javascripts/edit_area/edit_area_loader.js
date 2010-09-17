@@ -376,7 +376,7 @@ EditAreaLoader.prototype ={
 		
 		// create css link for the iframe if the whole css text has not been already loaded by the compressor
 		if(!t.iframe_css){
-			t.iframe_css="<link href='"+ t.baseURL +"edit_area.css' rel='stylesheet' type='text/css' />";
+			t.iframe_css="<link href='"+ t.baseURL +"style.css' rel='stylesheet' type='text/css' />";
 		}
 		
 		
