@@ -24,28 +24,21 @@ object JavacUtil {
     println("Compiling: " + source)
     val files = Seq(new StringJavaFileObject("Foo", source)) // TODO: parse for class name
     val javacOpts = Seq("-d", buildDir.getAbsolutePath) // set buildDir
-    val success = javac.getTask(null, fileManager, errorCollector, javacOpts, null, files).call()
+    val success = synchronized {
+      // javac does not allow concurrent access
+      javac.getTask(null, fileManager, errorCollector, javacOpts, null, files).call()
+    }
     val errors = errorCollector.getDiagnostics.iterator.map(diag =>
       CompileError(diag.getLineNumber, diag.getColumnNumber, diag.getMessage(null))).toList
     if (success.booleanValue) None
     else Some(errors)
   }
 
-  def run(mainClass: String): String = {
-    val runtime = Runtime.getRuntime 
-    val process = runtime.exec("java %s".format(mainClass))
+  def run(classpath: File, mainClass: String): Process = {
+    val process = Runtime.getRuntime.exec("java -cp %s %s".format(classpath.getAbsolutePath, mainClass))
     println("new process created")
-    val inputStream = new BufferedInputStream(process.getInputStream)
-    var cur = inputStream.read()
-    val baos = new ByteArrayOutputStream(1024)
-    while (cur != -1) {
-      baos.write(cur)
-      cur = inputStream.read()
-    }
-    inputStream.close()
-    new String(baos.toByteArray)
+    process
   }
-
 
   val defaultCode = """
   |public class Foo {

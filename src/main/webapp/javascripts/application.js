@@ -14,7 +14,7 @@ function withEditorPaneWindow(fcn) {
     // HACK: wait invoke in a setTimeout function now, hoping that it will
     // load later
     setTimeout(function() {
-      console.log("Had to load later");
+      //console.log("Had to load later");
       fcn(window.frames[F_EDITOR_PANE]);
     }, 3000);
   }

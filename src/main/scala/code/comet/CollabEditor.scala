@@ -3,11 +3,12 @@ package code.comet
 import code.util._
 
 import net.liftweb._
-import http._
+import http.{ jquery => _, _ }
 import actor._
 import util._
 import js._ 
 import JsCmds._
+import jquery.JqJsCmds._
 import JE._
 import S._
 import Helpers._
@@ -15,11 +16,14 @@ import Helpers._
 import scala.xml._
 
 import java.util.concurrent.atomic._
+import java.io._
 
 case class CodeUpdate(from: String, newCode: String)
 
 case object GetCode
 case class CodeResp(curCode: String)
+
+case class ConsoleAppend(contents: String)
 
 object CollabEditor extends LiftActor with ListenerManager {
   private var codeUpdate: Option[CodeUpdate] = None
@@ -31,6 +35,31 @@ object CollabEditor extends LiftActor with ListenerManager {
       updateListeners()
     case GetCode =>
       reply(CodeResp(codeUpdate.map(_.newCode).getOrElse(JavacUtil.defaultCode)))
+  }
+}
+
+class ProcessReader(process: Process, respondTo: CollabEditor) extends Thread {
+  override def run() {
+    val inputStream = new BufferedInputStream(process.getInputStream)
+    var cur = inputStream.read()
+    val buf = new ByteArrayOutputStream(1024)
+    while (cur != -1) {
+      buf.write(cur)
+      if (inputStream.available == 0) {
+        // next invocation of read blocks
+        respondTo ! ConsoleAppend(new String(buf.toByteArray))
+        buf.reset()
+      }
+      cur = inputStream.read()
+    }
+    inputStream.close()
+  }
+}
+
+class ProcessWaiter(process: Process, callback: () => Unit) extends Thread {
+  override def run() {
+    process.waitFor()
+    callback()
   }
 }
 
@@ -46,11 +75,16 @@ class CollabEditor extends CometActor with CometListener {
 
   override def lowPriority = {
     case CodeUpdate(thisId, newCode) =>
-      //reRender(false)
       println("calling editAreaLoader.setValue, from: " + thisId)
-      partialUpdate(Seq[JsCmd](
-        Call("editAreaLoader.setValue", Str("editorpane"), Str(newCode)),
-        compile(newCode)))
+      if (thisId != uniqueId) // only update if it came from someone else
+        partialUpdate(Seq[JsCmd](
+          Call("editAreaLoader.setValue", Str("editorpane"), Str(newCode)),
+          compile(newCode)))
+      else // otherwise just run compilation task
+        partialUpdate(compile(newCode))
+    case ConsoleAppend(contents) =>
+      println("got append: " + contents)
+      partialUpdate(AppendHtml("console", <pre>{contents}</pre>))
   }
 
   def compile(newCode: String): JsCmd = {
@@ -65,10 +99,24 @@ class CollabEditor extends CometActor with CometListener {
     }
   }
 
+  @volatile var currentPrintWriter: Option[PrintWriter] = None
+
   def render = {
     val code = CollabEditor !? GetCode match { case CodeResp(c) => c }
     bind("e",
       "theID" -> <div id="__ID__">{uniqueId}</div>,
-      "textbox" -> SHtml.textarea(code, (c: String) => {}, "id" -> "editorpane"))
+      "textbox" -> SHtml.textarea(code, (c: String) => {}, "id" -> "editorpane"),
+      "run" -> SHtml.ajaxButton("Run", () => { 
+        val proc = JavacUtil.run(buildDir, "Foo")
+        currentPrintWriter = Some(new PrintWriter(proc.getOutputStream))
+        new ProcessReader(proc, this).start()
+        new ProcessWaiter(proc, () => currentPrintWriter = None).start()
+        SetHtml("console", Text(""))
+      }),
+      "stdin" -> SHtml.ajaxText("", (cmd: String) => { 
+        currentPrintWriter.foreach(w => { w.println(cmd); w.flush() })
+        SetValById("stdin", Str(""))
+      }, "id" -> "stdin")
+    )
   } 
 }
