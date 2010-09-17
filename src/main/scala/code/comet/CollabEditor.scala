@@ -121,7 +121,7 @@ class CollabEditor extends CometActor with CometListener {
     bind("e",
       "theID" -> <div id="__ID__">{uniqueId}</div>,
       "textbox" -> SHtml.textarea(code, (c: String) => {}, "id" -> "editorpane"),
-      "run" -> SHtml.ajaxButton("Run", () => { 
+      "run" -> SHtml.ajaxButton(<img src="/images/car.png" class="icon"/> ++ Text("Run"), () => { 
         val proc = JavacUtil.run(buildDir, "Foo")
         currentPrintWriter = Some(new PrintWriter(proc.getOutputStream))
         new ProcessReader(proc, this).start()
