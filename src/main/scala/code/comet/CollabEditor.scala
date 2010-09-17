@@ -88,14 +88,27 @@ class CollabEditor extends CometActor with CometListener {
   }
 
   def compile(newCode: String): JsCmd = {
+    def renderDiags(diags: List[CompileDiagnostic]): Seq[JsCmd] = {
+      diags.map(diag => diag match {
+        case CompileError(lineNum, columnNum, error) =>
+          Call("highlightLine", Str(lineNum.toString), Str(error)).cmd
+        case CompileWarning(lineNum, columnNum, warning) =>
+          Call("highlightWarningLine", Str(lineNum.toString), Str(warning)).cmd
+      }).toSeq
+    }
     JavacUtil.compile(buildDir, newCode) match {
-      case None =>
-        SetHtml("console", Text("Successful compliation"))
-      case Some(errors) =>
+      case CompileResult(true, Nil) =>
+        Seq[JsCmd](SetHtml("console", Text("Successful compliation")), Call("clearLines"))
+      case CompileResult(true, diags) =>
         Seq[JsCmd](
-          SetHtml("console", Text("Compilation failure") ++ <br/> ++ errors.map(err => Text(err.error))),
-          Call("clearLines")) ++
-        errors.map(err => Call("highlightLine", Str(err.lineNum.toString), Str(err.error)).cmd).toSeq
+          SetHtml("console", Text("Successful compliation with warnings") ++ <br/> ++ 
+            diags.map(diag => <div title={diag.lineNum}>{diag.message}</div>)),
+          Call("clearLines")) ++ renderDiags(diags)
+      case CompileResult(false, diags) =>
+        Seq[JsCmd](
+          SetHtml("console", Text("Compilation failure") ++ <br/> ++ 
+            diags.map(diag => <div title={diag.lineNum}>{diag.message}</div>)),
+          Call("clearLines")) ++ renderDiags(diags)
     }
   }
 
