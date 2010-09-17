@@ -3,7 +3,7 @@
 }
 
 .container{
-  margin-left: 100px;
+  margin-left: 50px;
   width: inherit;
 }
 
@@ -26,10 +26,11 @@
 
 #editor-container{
   float: left;
-  width: 700px;
+  width: 750px;
 }
 
 #right{
+  padding-left: 1em;
   float: left;
 }
 
@@ -40,6 +41,7 @@
   padding: 10px;
   width: 300px;
   min-height: 5em;
+  margin-top: 1em;
 }
 
 #console pre{
@@ -59,9 +61,13 @@
   content: "> ";
 }
 
-.line-error{
+.line-error, .icon{
   padding-right: 2px;
   margin-bottom: -2px;
+}
+
+#button-bar button{
+  
 }
 
 body, html, table, form, textarea{
