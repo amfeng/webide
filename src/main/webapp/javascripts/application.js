@@ -1,7 +1,7 @@
 $(document).ready(function() {
    bindCSS();
    //$('#stdin').attr('placeholder', '> ');
-   buildMethodView([['public static void main', 2]]);
+   buildMethodView([['public static void main', 2], ['public method yay', 6]]);
 });
 
 var F_EDITOR_PANE = "frame_editorpane";

@@ -81,10 +81,11 @@ body, html, table, form, textarea{
 
 #method-list{
   width: 320px;
-  background: gray;
+  margin-top: 1em;
+  margin-left: 1em;
 }
 
-#method-list li{
-  
+#method-list li:hover{
+  background: #eee;
 }
 
