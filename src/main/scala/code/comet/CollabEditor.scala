@@ -122,11 +122,17 @@ class CollabEditor extends CometActor with CometListener {
       "theID" -> <div id="__ID__">{uniqueId}</div>,
       "textbox" -> SHtml.textarea(code, (c: String) => {}, "id" -> "editorpane"),
       "run" -> SHtml.ajaxButton(<img src="/images/car.png" class="icon"/> ++ Text("Run"), () => { 
-        val proc = JavacUtil.run(buildDir, "Foo")
-        currentPrintWriter = Some(new PrintWriter(proc.getOutputStream))
-        new ProcessReader(proc, this).start()
-        new ProcessWaiter(proc, () => currentPrintWriter = None).start()
-        SetHtml("console", Text(""))
+        val mainClass = FileUtils.mainClassFromBuildDir(buildDir)
+        mainClass match {
+          case Some(main) =>
+            val proc = JavacUtil.run(buildDir, main)
+            currentPrintWriter = Some(new PrintWriter(proc.getOutputStream))
+            new ProcessReader(proc, this).start()
+            new ProcessWaiter(proc, () => currentPrintWriter = None).start()
+            SetHtml("console", Text(""))
+          case None =>
+            SetHtml("console", Text("Error: Could not find main class"))
+        }
       }),
       "stdin" -> SHtml.ajaxText("", (cmd: String) => { 
         currentPrintWriter.foreach(w => { w.println(cmd); w.flush() })

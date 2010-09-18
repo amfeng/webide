@@ -39,8 +39,12 @@ object JavacUtil {
   def compile(buildDir: File, source: String): CompileResult = {
     val errorCollector = new DiagnosticCollector[JavaFileObject]
     val fileManager = javac.getStandardFileManager(errorCollector, null, null)
-    println("Compiling: " + source)
-    val files = Seq(new StringJavaFileObject("Foo", source)) // TODO: parse for class name
+    val mainClass = 
+      ParseUtils.getPackageName(source).map(pkg => pkg + ".").getOrElse("") +
+      ParseUtils.getClassName(source).getOrElse("NoName")
+    println("Compiling (mainClass %s): %s".format(mainClass, source))
+    val fileSource = new StringJavaFileObject(mainClass, source)
+    val files = Seq(fileSource)
     val javacOpts = Seq("-d", buildDir.getAbsolutePath, "-Xlint:all", "-deprecation") // set buildDir
     val success = synchronized {
       // javac does not allow concurrent access
@@ -55,6 +59,10 @@ object JavacUtil {
         println("Found unhandled diagnostic of kind %s, message %s".format(diag.getKind, diag.getMessage(null)))
         Nil
       })
+    if (success.booleanValue) {
+      val MAINCLASS = new File(buildDir, "MAINCLASS")
+      FileUtils.writeContentsToFile(MAINCLASS, mainClass)
+    }
     CompileResult(success.booleanValue, diags)
   }
 
@@ -65,9 +73,33 @@ object JavacUtil {
   }
 
   val defaultCode = """
-  |public class Foo {
-  |  public static void main(String[] args) {
-  |    System.out.println("Hello, Yahoo hackathon!");
+  |/**
+  | * Yahoo! Hackathon Day Demo
+  | */
+  |
+  |package edu.berkeley;
+  |
+  |import java.io.*;
+  |import java.util.*;
+  |
+  |/**
+  | * Main Class to demo the IDE
+  | *
+  | * @author Allen Chen
+  | * @author Amber Feng
+  | * @author Stephen Tu
+  | */
+  |public class Read {
+  |  public static void main(String[] args) throws Exception {
+  |    System.out.println("Please enter a number: ");
+  |    BufferedReader stdin = 
+  |      new BufferedReader(new InputStreamReader(System.in));
+  |    String line = stdin.readLine();
+  |    int val = Integer.parseInt(line);
+  |    System.out.println("Your number was: " + val);
+  |
+  |    List l = new ArrayList();
+  |    l.add("This is an unchecked operation"); // oops!
   |  }
   |}
   """.stripMargin
