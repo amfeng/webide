@@ -45,7 +45,7 @@ object JavacUtil {
     val mainClass = 
       ParseUtils.getPackageName(source).map(pkg => pkg + ".").getOrElse("") +
       ParseUtils.getClassName(source).getOrElse("NoName")
-    println("Compiling (mainClass %s): %s".format(mainClass, source))
+    println("Compiling (mainClass %s)".format(mainClass))
     val fileSource = new StringJavaFileObject(mainClass, source)
     val files = Seq(fileSource)
     val javacOpts = Seq("-d", buildDir.getAbsolutePath, "-Xlint:all", "-deprecation") // set buildDir
@@ -72,7 +72,7 @@ object JavacUtil {
         val extractor = MethodExtractor.extractMethods(classFile)
         extractor.visitorHash.map(kv => (kv._2.lineNumber, kv._2.getMethodSignature)).toList.sortBy(_._1)
       } else Nil
-    println("Compile returning compile result")
+    //println("Compile returning compile result")
     CompileResult(success.booleanValue, diags, methods)
   }
 

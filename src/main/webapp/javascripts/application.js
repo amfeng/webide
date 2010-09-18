@@ -36,7 +36,7 @@ function bindCSS(){
     win.document.body.appendChild(cssLink);
     //win.document.body.appendChild(jquery);
   });
-  console.log("Bound CSS and JS to iframe");
+  //console.log("Bound CSS and JS to iframe");
   
 }
 
@@ -80,12 +80,12 @@ function getElementsByClass(searchClass,node,tag) {
 }
 
 function buildMethodView(list){
-  console.log("buildMethodView called: " + list)
+  //console.log("buildMethodView called: " + list)
   var ul_container = $('#method-list ul')
   for(var i = 0; i < list.length; i++){
     var method_name = list[i][0];
     var method_line = list[i][1];
-    console.log("method name: " + method_name);
+    //console.log("method name: " + method_name);
     var list_element = $("<li>" + method_name +"</li>").attr("title", method_line)
     ul_container.append(list_element);
     list_element.click(function(){
