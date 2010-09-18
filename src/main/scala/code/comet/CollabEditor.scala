@@ -38,9 +38,8 @@ object CollabEditor extends LiftActor with ListenerManager {
   }
 }
 
-class ProcessReader(process: Process, respondTo: CollabEditor) extends Thread {
+class InputStreamReader(inputStream: InputStream, respondTo: CollabEditor) extends Thread {
   override def run() {
-    val inputStream = new BufferedInputStream(process.getInputStream)
     var cur = inputStream.read()
     val buf = new ByteArrayOutputStream(1024)
     while (cur != -1) {
@@ -140,7 +139,8 @@ class CollabEditor extends CometActor with CometListener {
           case Some(main) =>
             val proc = JavacUtil.run(buildDir, main)
             currentPrintWriter = Some(new PrintWriter(proc.getOutputStream))
-            new ProcessReader(proc, this).start()
+            new InputStreamReader(new BufferedInputStream(proc.getInputStream), this).start()
+            new InputStreamReader(new BufferedInputStream(proc.getErrorStream), this).start()
             new ProcessWaiter(proc, () => currentPrintWriter = None).start()
             SetHtml("console", Text(""))
           case None =>
