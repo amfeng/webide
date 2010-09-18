@@ -30,7 +30,10 @@ case class CompileWarning(val lineNum: Long, columnNum: Long, warning: String)
   def message = warning
 }
 
-case class CompileResult(success: Boolean, diagnostics: List[CompileDiagnostic])
+case class CompileResult(
+    success: Boolean, 
+    diagnostics: List[CompileDiagnostic],
+    methods: List[(Int, String)])
 
 object JavacUtil {
   val javac = ToolProvider.getSystemJavaCompiler
@@ -63,7 +66,14 @@ object JavacUtil {
       val MAINCLASS = new File(buildDir, "MAINCLASS")
       FileUtils.writeContentsToFile(MAINCLASS, mainClass)
     }
-    CompileResult(success.booleanValue, diags)
+    val methods = 
+      if (success.booleanValue) {
+        val classFile = new File(buildDir, mainClass.replace('.', '/') + ".class")
+        val extractor = MethodExtractor.extractMethods(classFile)
+        extractor.visitorHash.map(kv => (kv._2.lineNumber, kv._2.getMethodSignature)).toList.sortBy(_._1)
+      } else Nil
+    println("Compile returning compile result")
+    CompileResult(success.booleanValue, diags, methods)
   }
 
   def run(classpath: File, mainClass: String): Process = {

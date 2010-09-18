@@ -30,7 +30,7 @@ object CollabEditor extends LiftActor with ListenerManager {
   def createUpdate = codeUpdate.getOrElse(null)
   override def lowPriority = {
     case c: CodeUpdate =>
-      println("Got code update to: " + c.newCode)
+      //println("Got code update to: " + c.newCode)
       codeUpdate = Some(c)
       updateListeners()
     case GetCode =>
@@ -75,7 +75,7 @@ class CollabEditor extends CometActor with CometListener {
 
   override def lowPriority = {
     case CodeUpdate(thisId, newCode) =>
-      println("calling editAreaLoader.setValue, from: " + thisId)
+      //println("calling editAreaLoader.setValue, from: " + thisId)
       if (thisId != uniqueId) // only update if it came from someone else
         partialUpdate(Seq[JsCmd](
           Call("editAreaLoader.setValue", Str("editorpane"), Str(newCode)),
@@ -83,7 +83,7 @@ class CollabEditor extends CometActor with CometListener {
       else // otherwise just run compilation task
         partialUpdate(compile(newCode))
     case ConsoleAppend(contents) =>
-      println("got append: " + contents)
+      //println("got append: " + contents)
       partialUpdate(AppendHtml("console", <pre>{contents}</pre>))
   }
 
@@ -96,16 +96,29 @@ class CollabEditor extends CometActor with CometListener {
           Call("highlightWarningLine", Str(lineNum.toString), Str(warning)).cmd
       }).toSeq
     }
+    def renderMethods(methods: List[(Int, String)]): NodeSeq = {
+      //methods.map(kv => Call("addMethodView", Str(kv._2), Str(kv._1.toString)).cmd).toSeq
+      <ul>
+      {
+        methods.map(kv => <li onclick="jumpToMethod(this)" title={kv._1}>{kv._2}</li>)
+      }
+      </ul>
+    }
     JavacUtil.compile(buildDir, newCode) match {
-      case CompileResult(true, Nil) =>
-        Seq[JsCmd](SetHtml("console", Text("Successful compliation")), Call("clearLines"))
-      case CompileResult(true, diags) =>
+      case CompileResult(true, Nil, methods) =>
+        Seq[JsCmd](
+          SetHtml("console", Text("Successful compliation")), 
+          Call("clearLines"),
+          SetHtml("method-list", renderMethods(methods)))
+      case CompileResult(true, diags, methods) =>
         Seq[JsCmd](
           SetHtml("console", Text("Successful compliation with warnings") ++ <br/> ++ 
             diags.map(diag => 
               <div onclick="jumpToMethod(this)" title={diag.lineNum}>{diag.message}</div>)),
-          Call("clearLines")) ++ renderDiags(diags)
-      case CompileResult(false, diags) =>
+          Call("clearLines"),
+          SetHtml("method-list", renderMethods(methods))) ++ 
+        renderDiags(diags)
+      case CompileResult(false, diags, _) =>
         Seq[JsCmd](
           SetHtml("console", Text("Compilation failure") ++ <br/> ++ 
             diags.map(diag => 

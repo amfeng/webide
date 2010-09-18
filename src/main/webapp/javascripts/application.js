@@ -1,7 +1,7 @@
 $(document).ready(function() {
    bindCSS();
    //$('#stdin').attr('placeholder', '> ');
-   buildMethodView([['public static void main', 2], ['public method yay', 6]]);
+   //buildMethodView([['public static void main', 2], ['public method yay', 6]]);
 });
 
 var F_EDITOR_PANE = "frame_editorpane";
@@ -80,16 +80,31 @@ function getElementsByClass(searchClass,node,tag) {
 }
 
 function buildMethodView(list){
-  ul_container = $('#method-list ul')
-  for(i = 0; i < list.length; i++){
-    method_name = list[i][0];
-    method_line = list[i][1];
-    list_element = $("<li>" + method_name +"</li>").attr("title", method_line)
+  console.log("buildMethodView called: " + list)
+  var ul_container = $('#method-list ul')
+  for(var i = 0; i < list.length; i++){
+    var method_name = list[i][0];
+    var method_line = list[i][1];
+    console.log("method name: " + method_name);
+    var list_element = $("<li>" + method_name +"</li>").attr("title", method_line)
     ul_container.append(list_element);
     list_element.click(function(){
       jumpToMethod(this);
     });
   }
+}
+
+function addMethodView(method_name, method_line) {
+  var ul_container = $('#method-list ul')
+  var list_element = $("<li>" + method_name +"</li>").attr("title", method_line)
+  ul_container.append(list_element);
+  list_element.click(function(){
+    jumpToMethod(this);
+  });
+}
+
+function clearMethodView() {
+  $("#method-list ul li").remove();
 }
 
 function jumpToMethod(ele){
