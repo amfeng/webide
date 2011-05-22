@@ -7,12 +7,11 @@ WebIDE is a collaborative (real-time) browser IDE complete with syntax highlight
 1. Download sbt: http://code.google.com/p/simple-build-tool
 2. Download source code:
 
-    git clone git@github.com:afeng/webide.git
+        git clone git@github.com:afeng/webide.git
 3. Run sbt to build:
 
-    cd webide
-
-    sbt update ~jetty-run
+        cd webide
+        sbt update ~jetty-run
 4. Now go to http://localhost:8080
 
 Note that this requires JDK 1.6 (not just JRE, since we use javax.tools.*)
