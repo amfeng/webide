@@ -11,6 +11,7 @@ WebIDE is a collaborative (real-time) browser IDE complete with syntax highlight
 3. Run sbt to build:
 
     cd webide
+
     sbt update ~jetty-run
 4. Now go to http://localhost:8080
 
